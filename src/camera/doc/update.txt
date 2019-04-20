@@ -1,0 +1,6 @@
+20180118:
+    1/ get correct channel, not because of cvToShare or cvToCopy, but should not cout channels in main functio
+       it will show a empty cv::Mat's channel == 1;
+    2/ inrange seems return gray, because it's channel == 1, needs more check.
+    3/ wants to show lanemarks in raw_image by red, how to do?
+    4/ lately, will do detection lanemarking with polyline in gray and draw polyline in raw_image
