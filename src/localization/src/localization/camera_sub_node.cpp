@@ -27,8 +27,8 @@ void image_callback(const sensor_msgs::ImageConstPtr& msg) {
     if (image1.empty() && image2.empty()) {
         //mtx.lock();
         ++count;
-        image1 = cv_bridge::toCvShare(msg, sensor_msgs::image_encodings::BGR8)->image;
-        image2 = image1;
+        image2 = cv_bridge::toCvShare(msg, sensor_msgs::image_encodings::BGR8)->image;
+        //image2 = image1;
         //std::cout << "ss1: " << image1.empty() << std::endl;
         //std::cout << "ss2: " << image2.empty() << std::endl;
         std::cout << "tt: " << count << std::endl;
@@ -40,7 +40,9 @@ void image_callback(const sensor_msgs::ImageConstPtr& msg) {
         image1 = image2;
         //std::cout << "ss2: " << image1.empty() << std::endl;
         image2 = cv_bridge::toCvShare(msg, sensor_msgs::image_encodings::BGR8)->image;
-        _update = true;
+        if (count > 2) {
+            _update = true;
+        }
         //mtx.unlock();
         //std::cout << "ss1: " << image1.empty() << std::endl;
         //std::cout << "ss2: " << image2.empty() << std::endl;

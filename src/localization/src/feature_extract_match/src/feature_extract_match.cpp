@@ -10,10 +10,10 @@ void find_feature_matches(cv::Mat& img_1,
     cv::Mat descriptors_2;
     cv::Ptr<cv::ORB> orb = cv::ORB::create(500, 1.2f, 8, 31, 0, 2, cv::ORB::HARRIS_SCORE, 31, 20);
     //detect orb 角点
-    orb->detect(img_2, keypoints_1);
+    orb->detect(img_1, keypoints_1);
     orb->detect(img_2, keypoints_2);
     //calculate brief 描述子
-    orb->compute(img_2, keypoints_1, descriptors_1);
+    orb->compute(img_1, keypoints_1, descriptors_1);
     orb->compute(img_2, keypoints_2, descriptors_2);
     //do match, use Hamming 距离
     std::vector<cv::DMatch> matches;
