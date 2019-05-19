@@ -5,8 +5,11 @@
 #include <sstream>
 #include <string>
 #include <stdio.h>
+#include "../../localization/src/feature_extract_match/include/common_header.h"
 int num = 1;
 int main(int argc, char *argv[]) {
+    cv::Ptr<cv::ORB> orb = cv::ORB::create(500, 1.2f, 8, 31, 0, 2, cv::ORB::HARRIS_SCORE, 31, 20);
+    std::vector<cv::KeyPoint> keypoints_1;
     //int num = 1;
     std::string video_path = "/home/zhuxiaohui/hw_slam/src/camera/data/video_first_1.h264";
     ros::init(argc, argv, "image_publisher");
@@ -35,7 +38,11 @@ int main(int argc, char *argv[]) {
             cv::putText(img, index, cv::Point(1300, 100), cv::FONT_HERSHEY_PLAIN, 5, cv::Scalar(0,0,255));
             //cv::imshow("publisher", img);
             //cv::waitKey(1);
-            msg = cv_bridge::CvImage(std_msgs::Header(), sensor_msgs::image_encodings::BGR8, img).toImageMsg();
+            //orb->detect(img, keypoints_1);
+            //std::cout << keypoints_1.size() << std::endl;
+            std_msgs::Header head;
+            head.stamp = ros::Time::now();
+            msg = cv_bridge::CvImage(head, sensor_msgs::image_encodings::BGR8, img).toImageMsg();
             pub.publish(msg);
         }
         ros::spinOnce();

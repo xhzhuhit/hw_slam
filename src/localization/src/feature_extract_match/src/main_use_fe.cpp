@@ -10,7 +10,10 @@ int main(int argc, char** argv) {
     //std::cout << pt1.x << "  " << pt1.y << std::endl;
     //read image
     cv::Mat img_10 = cv::imread(argv[1], CV_LOAD_IMAGE_COLOR);
+    //cv::Mat img_20 = img_10;
+    //cv::Mat 
     cv::Mat img_20 = cv::imread(argv[2], CV_LOAD_IMAGE_COLOR);
+    //img_10 = img_20.clone();
     cv::Mat img_1;
     cv::resize(img_10, img_1, cv::Size(800, 500), CV_INTER_CUBIC);
     cv::Mat img_2;

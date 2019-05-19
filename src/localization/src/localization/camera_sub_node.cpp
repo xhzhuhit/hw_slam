@@ -5,6 +5,7 @@
 #include <string>
 #include <unistd.h>
 
+#include <atomic>
 #include <thread>
 #include <mutex>
 #include "src/feature_extract_match/include/feature_extract_match.hpp"
@@ -18,44 +19,54 @@ std::vector<cv::KeyPoint> keypoints_2;
 std::vector<cv::DMatch> good_matches;
 int num = 0;
 std::mutex mtx;
+std::atomic<bool> _update(false);
 
 void image_callback(const sensor_msgs::ImageConstPtr& msg) {
+    std::lock_guard<std::mutex> guard(mtx);
+    //mtx.lock();
     if (image1.empty() && image2.empty()) {
         //mtx.lock();
         ++count;
-        image2 = cv_bridge::toCvShare(msg, sensor_msgs::image_encodings::BGR8)->image;
+        image1 = cv_bridge::toCvShare(msg, sensor_msgs::image_encodings::BGR8)->image;
+        image2 = image1;
         //std::cout << "ss1: " << image1.empty() << std::endl;
         //std::cout << "ss2: " << image2.empty() << std::endl;
-        std::cout << "t: " << count << std::endl;
+        std::cout << "tt: " << count << std::endl;
         //mtx.unlock();
     } else {
         //mtx.lock();
         ++count;
+        //std::cout << "ss1: " << image1.empty() << std::endl;
         image1 = image2;
+        //std::cout << "ss2: " << image1.empty() << std::endl;
         image2 = cv_bridge::toCvShare(msg, sensor_msgs::image_encodings::BGR8)->image;
+        _update = true;
         //mtx.unlock();
         //std::cout << "ss1: " << image1.empty() << std::endl;
         //std::cout << "ss2: " << image2.empty() << std::endl;
         //std::cout << "ttt: " << count << std::endl;
     }
+    //mtx.unlock();
     //std::cout << num++ << std::endl;
 }
 
 void do_find_matches() {
     while (1 && ros::ok()) {
     //for (int i = 0; i < 10; ++i) {
-        mtx.lock();
+        std::lock_guard<std::mutex> guard(mtx);
+        //mtx.lock();
         //std::cout << "count: " << count << std::endl;
         //std::cout << "sss1: " << image2.empty() << std::endl;
         //cv::waitKey(1000);
         //sleep(1);
-        if (!image1.empty()) {
+        if (!image1.empty() && _update) {
             find_feature_matches(image1, image2, keypoints_1, keypoints_2, good_matches);
+            _update = false;
             //std::cout << "ss2: " << image1.empty() << "  " << image2.empty() << std::endl;
         }
         //std::cout << "tt2: " << count << std::endl;
         //std::cout << "sss2: " << good_matches.size() << std::endl;
-        mtx.unlock();
+        //mtx.unlock();
         //绘制匹配结果
         //cv::Mat img_match;
         //cv::Mat img_goodmatch;
